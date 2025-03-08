@@ -47,13 +47,15 @@ const usedData = ref<any[]>(props.data);
 // 单选值
 const radio = ref("");
 
+// 扁平化 columns
+const flatColumns = computed(() => flatColumnsFunc(tableColumns));
+
 // // 定义 emit 事件
 // const emit = defineEmits<{
 //   dragSort: [{ newIndex?: number; oldIndex?: number }];
 // }>();
 
-// 扁平化 columns
-const flatColumns = computed(() => flatColumnsFunc(tableColumns));
+const { scrollContainerEl, updateRenderedItemCache, updateOffset, getDom, getItemHeightFromCache, saveDATA } = useVirtualized();
 
 // 表格拖拽排序
 const dragSort = () => {
@@ -62,10 +64,11 @@ const dragSort = () => {
     handle: ".move",
     animation: 300,
     onEnd({ newIndex, oldIndex }) {
-      const [removedItem] = usedData.value.splice(oldIndex!, 1);
+      const [removedItem] = saveDATA.value.splice(oldIndex!, 1);
       usedData.value.splice(newIndex!, 0, removedItem);
       // emit("dragSort", { newIndex, oldIndex });
       ElMessage.success("拖动变更行位置成功");
+      getSpanArr(usedData.value);
     }
   });
 };
@@ -209,7 +212,6 @@ const arraySpanMethod = ({ row, column, rowIndex, columnIndex }: SpanMethodProps
   }
 };
 
-const { scrollContainerEl, updateRenderedItemCache, updateOffset, getDom, getItemHeightFromCache, saveDATA } = useVirtualized();
 
 // 初始化表格
 onMounted(async () => {
@@ -219,6 +221,7 @@ onMounted(async () => {
   getDom();
   scrollContainerEl.value?.addEventListener("scroll", handleScroll);
 });
+
 // 滚动相关
 const sIndxe = ref(1);
 // 更新实际渲染数据
@@ -242,9 +245,6 @@ const updateRenderData = (scrollTop: number) => {
   // console.log(startIndex);
   sIndxe.value = startIndex;
 
-  // mergeConfig.rowMerge.forEach((item) => {
-  //   getSpanArr(usedData.value, item);
-  // });
   getSpanArr(usedData.value);
 };
 // 滚动事件
