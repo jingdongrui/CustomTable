@@ -33,7 +33,6 @@ const columns = reactive<ColumnProps<any>[]>([
         prop: "details",
         label: "详细信息",
         _children: [
-          { prop: "edu", label: "学历", width: 100 },
           { prop: "tel", label: "电话", width: 120 },
           { prop: "date", label: "出生日期", width: 120 },
           { prop: "address1", label: "地址1", width: 120 },
@@ -188,7 +187,7 @@ const validatePhone = (phone: string) => {
 </template>
 
 <style scoped lang="scss">
-.title{
+.title {
   text-align: center;
   padding: 20px;
 }

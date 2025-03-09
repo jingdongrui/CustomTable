@@ -63,9 +63,12 @@ const dragSort = () => {
   Sortable.create(tbody, {
     handle: ".move",
     animation: 300,
+    onStart() {
+      getSpanArr(usedData.value);
+    },
     onEnd({ newIndex, oldIndex }) {
       const [removedItem] = saveDATA.value.splice(oldIndex!, 1);
-      usedData.value.splice(newIndex!, 0, removedItem);
+      saveDATA.value.splice(newIndex!, 0, removedItem);
       // emit("dragSort", { newIndex, oldIndex });
       ElMessage.success("拖动变更行位置成功");
       getSpanArr(usedData.value);
@@ -185,24 +188,24 @@ const arraySpanMethod = ({ row, column, rowIndex, columnIndex }: SpanMethodProps
   }
 
   // 处理列合并
-  // if (mergeConfig.colMerge.includes(field)) {
+  // if (mergeConfig.colMerge.includes(column.property)) {
   //   // console.log(field);
-  //   const nextField = mergeConfig.colMerge[mergeConfig.colMerge.indexOf(field) + 1];
+  //   const nextField = mergeConfig.colMerge[mergeConfig.colMerge.indexOf(column.property) + 1];
   //   // console.log(nextField);
-  //   if (nextField && row[field] === row[nextField]) {
+  //   if (nextField && row[column.property] === row[nextField]) {
   //     return { rowspan: 1, colspan: 2 };
   //   }
-  //   // // console.log(flatColumns.value);
-  //   // // console.log(nextField);
-  //   // const index = flatColumns.value.findIndex((i) => {
-  //   //   // console.log( i.prop);
-  //   //   return i.prop === nextField;
-  //   // });
-  //   // console.log();
-  //   // console.log(index,columnIndex);
-  //   // if (columnIndex === 10) {
-  //   //   return [0, 0];
-  //   // }
+  //   // console.log(flatColumns.value);
+  //   // console.log(nextField);
+  //   const index = flatColumns.value.findIndex((i) => {
+  //     // console.log( i.prop);
+  //     return i.prop === nextField;
+  //   });
+  //   console.log();
+  //   console.log(index,columnIndex);
+  //   if (columnIndex === 10) {
+  //     return [0, 0];
+  //   }
   // }
 
   // 处理行合并
@@ -211,7 +214,6 @@ const arraySpanMethod = ({ row, column, rowIndex, columnIndex }: SpanMethodProps
     return { rowspan, colspan: rowspan > 0 ? 1 : 0 };
   }
 };
-
 
 // 初始化表格
 onMounted(async () => {
@@ -250,7 +252,7 @@ const updateRenderData = (scrollTop: number) => {
 // 滚动事件
 const handleScroll = (e: Event) => {
   // 渲染正确的数据
-  const target = e.target as HTMLElement
+  const target = e.target as HTMLElement;
   updateRenderData(target.scrollTop);
 };
 // 移除滚动事件
